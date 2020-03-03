@@ -32,6 +32,10 @@ def test_fermat(n, a):
     return potencia_modular(a, n-1, n) == 1
 
 
+def imprime_separador():
+    print("\n" + "*" * 80 + "\n")
+
+
 ################################################################################
 # Ejercicio 1: Test de Miller-Rabin para un numero (n) y un testigo (a) dado
 ################################################################################
@@ -163,7 +167,7 @@ def test_primo_fuerte(n, m):
 
     :return Devuelve True si n es probable primo fuerte y False en caso contrario. 
     """
-    return test_miller_rabin((n - 1) / 2, m)
+    return test_miller_rabin((n - 1) // 2, m)
 
 
 def primer_probable_primo_fuerte(n, m):
@@ -202,24 +206,7 @@ def primo_fuerte_n_bits(n, m):
 
     :return Devuelve el primer probable primo fuerte de n bits.
     """
-    # Establecer valor inicial y limite
-    p = 2 ** (n - 1)
-    limite = 2 ** n - 1
-
-    es_primo_fuerte = False
-
-    while not es_primo_fuerte and p <= limite:
-        p = primer_probable_primo(p, m)
-
-        if p <= limite:
-            es_primo_fuerte = test_primo_fuerte(p, m)
-            
-            if es_primo_fuerte:
-                primo_fuerte = p
-            
-            p += 1
-    
-    return primo_fuerte
+    return primer_probable_primo_fuerte(2 ** (n-1), m)
 
 
 ################################################################################
@@ -257,11 +244,8 @@ def calcular_m_falsos_testigos(n, m):
     """
     falsos_testigos = []
 
-    print(n)
-
     for _ in range(m):
         a = random.randint(2, n - 2)
-        print(a)
 
         if miller_rabin(n, a):
             falsos_testigos.append(a)
@@ -300,8 +284,6 @@ def falsos_testigos_fermat_miller_rabin(n, m):
     falsos_testigos_fermat = []
     falsos_testigos_miller_rabin = []
 
-    print(n)
-
     for _ in range(m):
         a = random.randint(2, n - 2)
 
@@ -315,6 +297,9 @@ def falsos_testigos_fermat_miller_rabin(n, m):
 
 
 if __name__ == "__main__":
+
+    imprime_separador()
+
     ############################################################################
     # Ejercicio 1
     print("Ejercicio 1")
@@ -324,28 +309,32 @@ if __name__ == "__main__":
     print("El numero es probable primo? ", miller_rabin(n, a))
 
     a = 10
-    print(f"Ejecutando test de Miller-Rabin para n = {n} y a = {a}")
+    print(f"\nEjecutando test de Miller-Rabin para n = {n} y a = {a}")
     print("El numero es probable primo? ", miller_rabin(n, a))
+
+    imprime_separador()
 
     ############################################################################
     # Ejercicio 2
-    print("\nEjercicio 2")
+    print("Ejercicio 2")
 
-    n, m = 341, 10
+    n, m = 341, 20
     print(f"Ejecutando test de Miller-Rabin para n = {n} y m = {m}")
     print("El numero es probable primo? ", test_miller_rabin(n, m))
 
     n = 1729
-    print(f"Ejecutando test de Miller-Rabin para n = {n} y m = {m}")
+    print(f"\nEjecutando test de Miller-Rabin para n = {n} y m = {m}")
     print("El numero es probable primo? ", test_miller_rabin(n, m))
 
     n = 203956878356401977405765866929034577280193993314348263094772646453283062722701277632936616063144088173312372882677123879538709400158306567338328279154499698366071906766440037074217117805690872792848149112022286332144876183376326512083574821647933992961249917319836219304274280243803104015000563790123
-    print(f"Ejecutando test de Miller-Rabin para n = {n} y m = {m}")
+    print(f"\nEjecutando test de Miller-Rabin para n = {n} y m = {m}")
     print("El numero es probable primo? ", test_miller_rabin(n, m))
+
+    imprime_separador()
 
     ############################################################################
     # Ejercicio 3
-    print("\nEjercicio 3")
+    print("Ejercicio 3")
 
     n = 14
     print(f"Buscando el primer primo mayor o igual que n = {n}")
@@ -355,15 +344,17 @@ if __name__ == "__main__":
     print("El numero es probable primo? ", test_miller_rabin(p, m))
 
     n= 1729
-    print(f"Buscando el primer primo mayor o igual que n = {n}")
+    print(f"\nBuscando el primer primo mayor o igual que n = {n}")
 
     p = primer_probable_primo(n, m)
     print(f"El primer primo mayor o igual encontrado es p = {p}")
     print("El numero es probable primo? ", test_miller_rabin(p, m))
 
+    imprime_separador()
+
     ############################################################################
     # Ejercicio 4
-    print("\nEjercicio 4")
+    print("Ejercicio 4")
 
     n = 12
     print(f"Buscando el primer primo fuerte mayor o igual que n = {n}")
@@ -373,15 +364,17 @@ if __name__ == "__main__":
     print("El numero es probable primo? ", test_miller_rabin(p, m))
 
     n= 1729
-    print(f"Buscando el primer primo fuerte mayor o igual que n = {n}")
+    print(f"\nBuscando el primer primo fuerte mayor o igual que n = {n}")
 
     p = primer_probable_primo_fuerte(n, m)
     print(f"El primer primo fuerte mayor o igual encontrado es p = {p}")
     print("El numero es probable primo? ", test_miller_rabin(p, m))
 
+    imprime_separador()
+
     ############################################################################
     # Ejercicio 5
-    print("\nEjercicio 5")
+    print("Ejercicio 5")
 
     n = 10
     print(f"Buscando el primer primo fuerte de n = {n} bits")
@@ -391,50 +384,109 @@ if __name__ == "__main__":
     print("El numero es probable primo? ", test_miller_rabin(p, m))
 
     n = 25
-    print(f"Buscando el primer primo fuerte de n = {n} bits")
+    print(f"\nBuscando el primer primo fuerte de n = {n} bits")
 
     p = primo_fuerte_n_bits(n, m)
     print(f"El primer primo fuerte de {n} bits es {p}")
     print("El numero es probable primo? ", test_miller_rabin(p, m))
 
+    n = 50
+    print(f"\nBuscando el primer primo fuerte de n = {n} bits")
+
+    p = primo_fuerte_n_bits(n, m)
+    print(f"El primer primo fuerte de {n} bits es {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    n = 100
+    print(f"\nBuscando el primer primo fuerte de n = {n} bits")
+
+    p = primo_fuerte_n_bits(n, m)
+    print(f"El primer primo fuerte de {n} bits es {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    n = 500
+    print(f"\nBuscando el primer primo fuerte de n = {n} bits")
+
+    p = primo_fuerte_n_bits(n, m)
+    print(f"El primer primo fuerte de {n} bits es {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    imprime_separador()
+
     ############################################################################
     # Ejercicio 6
-    print("\nEjercicio 6")
+    print("Ejercicio 6")
+
+    # Elegir n1 (11^2)
+    n1 = 121
+    print(f"Valor de n1 = {n1}")
+
+    falsos_testigos = calcular_todos_falsos_testigos(n1)
+
+    print(f"Falsos testigos encontrados: {falsos_testigos}")
+    print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, len(range(2, n1-1)))}")
+
+    # Elegir n2 (11 * 13 * 17 * 19 * 23)
+    n2 = 11 * 13 * 17 * 19 * 23
+    print(f"\nValor de n2 = {n2}")
+
+    m = 200
+
+    print(f"Numero de testigos que se van a probar m = {m}")
+
+    falsos_testigos = calcular_m_falsos_testigos(n2, m)
+
+    print(f"Falsos testigos encontrados: {falsos_testigos}")
+    print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, m)}")
+
+    # Elegir n3
+    p1 = primer_probable_primo(10000000, m)
+    p2 = primo_fuerte_n_bits(25, m)
+    n3 = p1 * p2
+    print(f"\nValor de p1 = {p1}")
+    print(f"Valor de p2 = {p2}")
+    print(f"Valor de n3 = {n3}")
+
+    print(f"Numero de testigos que se van a probar m = {m}")
+
+    falsos_testigos = calcular_m_falsos_testigos(n2, m)
+
+    print(f"Falsos testigos encontrados: {falsos_testigos}")
+    print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, m)}")
+
+    imprime_separador()
 
     ############################################################################
     # Ejercicio 7
-    print("\nEjercicio 7")
+    print("Ejercicio 7")
+
+    n = 3215031751
+
+    print(f"\nValor de n = {n}")
+    print(f"Numero de testigos que se van a probar m = {m}")
+
+    falsos_testigos = calcular_m_falsos_testigos(n, m)
+
+    print(f"Falsos testigos encontrados: {falsos_testigos}")
+    print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, m)}")
+
+    imprime_separador()
 
     ############################################################################
     # Ejercicio 8
-    print("\nEjercicio 8")
+    print("Ejercicio 8")
 
-    """
-    print(test_miller_rabin(1729, 10))
+    n, m = 2199733160881, 100
 
-    p = primer_probable_primo(1729, 10)
-    print(p)
+    print(f"\nValor de n = {n}")
+    print(f"Numero de testigos que se van a probar m = {m}")
 
-    fuerte = primer_probable_primo_fuerte(12, 10)
-    print(fuerte)
-    """
+    testigos_fermat, testigos_miller_rabin = falsos_testigos_fermat_miller_rabin(n, m)
 
-    #falsos_testigos = calcular_todos_falsos_testigos(121)
-    #falsos_testigos = calcular_m_falsos_testigos(11 * 13 * 17 * 19 * 23, 200)
-    #falsos_testigos = calcular_m_falsos_testigos(primer_probable_primo(10000000, 10) * primer_probable_primo(50000000, 10) , 200)
-    #print(falsos_testigos)
-    #print(calcular_proporcion_falsos_testigos(falsos_testigos, 200))
-    #print(calcular_proporcion_falsos_testigos(falsos_testigos, len(range(2, 124))))
+    print(f"Falsos testigos encontrados con el test de Fermat: {testigos_fermat}")
+    print(f"Falsos testigos encontrados con el test de Miller-Rabin: {testigos_miller_rabin}")
 
-    """
-    falsos_testigos = calcular_m_falsos_testigos(3215031751, 200)
-    print(falsos_testigos)
-    print(calcular_proporcion_falsos_testigos(falsos_testigos, 200))
-    """
+    print(f"Proporcion de falsos testigos para el tet de Fermat: {calcular_proporcion_falsos_testigos(testigos_fermat, m)}")
+    print(f"Proporcion de falsos testigos para el test de Miller-Rabin: {calcular_proporcion_falsos_testigos(testigos_miller_rabin, m)}")
 
-    fermat, mr = falsos_testigos_fermat_miller_rabin(2199733160881, 100)
-    print(fermat)
-    print(mr)
-
-    print(calcular_proporcion_falsos_testigos(fermat, 100))
-    print(calcular_proporcion_falsos_testigos(mr, 100))
+   
