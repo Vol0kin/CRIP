@@ -1,4 +1,3 @@
-from typing import Tuple
 import random
 
 ################################################################################
@@ -33,24 +32,11 @@ def test_fermat(n, a):
     return potencia_modular(a, n-1, n) == 1
 
 
-def raices_uno(p):
-    """
-    Funcion que encuentra todas las soluciones de la ecuacion x^2 - 1 = 0 en Z_p
-    """
-    l = []
-
-    for i in range(1, p):
-        if (i * i) % p == 1:
-            l.append(i)
-    
-    return l
-
-
 ################################################################################
 # Ejercicio 1: Test de Miller-Rabin para un numero (n) y un testigo (a) dado
 ################################################################################
 
-def descomposicion(n: int) -> Tuple[int, int]:
+def descomposicion(n):
     """
     Funcion para el calculo de la descomposicion de un numero como producto
     de 2^u * s, siendo s un numero impar.
@@ -70,7 +56,7 @@ def descomposicion(n: int) -> Tuple[int, int]:
     return u, s
 
 
-def miller_rabin(n: int, a: int) -> bool:    
+def miller_rabin(n, a):    
     """
     Funcion que realiza el test de primalidad de Miller-Rabin sobre un numero n
     dado utilizando un testigo a dado.
@@ -113,7 +99,7 @@ def miller_rabin(n: int, a: int) -> bool:
 # Ejercicio 2: Test de Miller-Rabin para un numero (n) con (m) numeros aleatorios
 ################################################################################
 
-def test_miller_rabin(n: int, m: int) -> bool:
+def test_miller_rabin(n, m):
     """
     Funcion que realiza el test de Miller-Rabin sobre un numero n para determinar
     si es posible primo o no utilizando m testigos aleatorios.
@@ -130,8 +116,6 @@ def test_miller_rabin(n: int, m: int) -> bool:
         
         es_prob_primo = miller_rabin(n, a)
         
-        print(f"Para el testigo a: {a} el resultado del test es {es_prob_primo}")
-        
         if not es_prob_primo:
             return False
     
@@ -143,11 +127,18 @@ def test_miller_rabin(n: int, m: int) -> bool:
 # (n) que sea probable primo
 ################################################################################
 
-def primer_probable_primo(n: int, m: int) -> int:
+def primer_probable_primo(n, m):
+    """
+    Funcion que calcula el primer numero mayor o igual a n que sea probable primo.
+
+    :param n: Numero a partir del que se quiere encontrar el siguiente primo.
+    :param m: Numero de testigos aleatorios que utilizar.
+
+    :return Devuelve un probable primo mayor o igual que n.
+    """
     es_posible_primo = False
 
     while not es_posible_primo:
-        print(f"Probando con n = {n}")
         es_posible_primo = test_miller_rabin(n, m)
 
         if es_posible_primo:
@@ -164,14 +155,29 @@ def primer_probable_primo(n: int, m: int) -> int:
 ################################################################################
 
 def test_primo_fuerte(n, m):
+    """
+    Funcion que comprueba si un numero n es un primo fuerte.
+
+    :param n: Numero a partir del que se quiere encontrar el siguiente primo fuerte.
+    :param m: Numero de testigos aleatorios que utilizar.
+
+    :return Devuelve True si n es probable primo fuerte y False en caso contrario. 
+    """
     return test_miller_rabin((n - 1) / 2, m)
 
-def primer_probable_primo_fuerte(n: int, m: int) -> int:
+
+def primer_probable_primo_fuerte(n, m):
+    """
+    Funcion que calcula el primer numero mayor o igual a n que sea probable
+    primo fuerte.
+
+    :param n: Numero a comprobar si es numero primo fuerte.
+    :param m: Numero de testigos aleatorios que utilizar.
+    """
     es_primo_fuerte = False
 
     while not es_primo_fuerte:
         n = primer_probable_primo(n, m)
-        print(f"siguiente test con {(n-1)//2}")
         es_primo_fuerte = test_primo_fuerte(n, m)
 
         if es_primo_fuerte:
@@ -183,13 +189,23 @@ def primer_probable_primo_fuerte(n: int, m: int) -> int:
 
 
 ################################################################################
-# Ejercicio 5: Dado un numero natural (n), calcular el primer numero primo fuerte (p)
-# de n bits (es decir, en el rango 2^(n-1) <= p <= 2^n-1)
+# Ejercicio 5: Dado un numero natural (n), calcular el primer numero primo fuerte
+# (p) de n bits (es decir, en el rango 2^(n-1) <= p <= 2^n-1)
 ################################################################################
 
 def primo_fuerte_n_bits(n, m):
+    """
+    Funcion que determina el primer numero que sea probable primo fuerte de n bits.
+
+    :param n: Numero de bits que tiene que tener el probable primo fuerte.
+    :param m: Numero de testigos aleatorios que utilizar.
+
+    :return Devuelve el primer probable primo fuerte de n bits.
+    """
+    # Establecer valor inicial y limite
     p = 2 ** (n - 1)
     limite = 2 ** n - 1
+
     es_primo_fuerte = False
 
     while not es_primo_fuerte and p <= limite:
@@ -212,6 +228,14 @@ def primo_fuerte_n_bits(n, m):
 ################################################################################
 
 def calcular_todos_falsos_testigos(n):
+    """
+    Funcion que calcula todos los falsos testigos mediante el test de Miller-Rabin
+    para un numero n. n no puede ser primo.
+
+    :param n: Numero del que se quieren calcular todos los falsos testigos.
+
+    :return Devuelve una lista con todos los falsos testigos.
+    """
     falsos_testigos = []
 
     for a in range(2, n - 1):
@@ -222,6 +246,15 @@ def calcular_todos_falsos_testigos(n):
 
 
 def calcular_m_falsos_testigos(n, m):
+    """
+    Funcion que calcula m falsos testigos aleatorios mediante el test de Miller-Rabin
+    para un numero n. n no puede ser pirmo.
+
+    :param n: Numero del que se quieren calcular los falsos testigos.
+    :param m: Numero de testigos aleatorios que utilizar.
+
+    :return Devuelve una lista con los falsos testigos encontrados.
+    """
     falsos_testigos = []
 
     print(n)
@@ -237,6 +270,14 @@ def calcular_m_falsos_testigos(n, m):
 
 
 def calcular_proporcion_falsos_testigos(falsos_testigos, m):
+    """
+    Funcion que calcula la proporcion de falsos testigos.
+
+    :param falsos_testigos: Lista con los falsos testigos encontrados.
+    :param m: Numero maximos de elementos que puede tener la lista.
+
+    :return Devuelve la proporcion de falsos testigos que se han encontrado.
+    """
     return len(falsos_testigos) / m
 
 
@@ -246,6 +287,16 @@ def calcular_proporcion_falsos_testigos(falsos_testigos, m):
 ################################################################################
 
 def falsos_testigos_fermat_miller_rabin(n, m):
+    """
+    Funcion que determina los falsos testigos segun los tests de Miller-Rabin
+    y Fermat para un numero m de testigos aleatorios.
+
+    :param n: Numero sobre el que se van a hacer los tests.
+    :param m: Numero de testigos aleatorios a utilizar.
+
+    :return Devuelve una lista con los falsos testigos para el test de Fermat
+            y otra lista con los falsos testigos para el test de Miller-Rabin.
+    """
     falsos_testigos_fermat = []
     falsos_testigos_miller_rabin = []
 
@@ -264,6 +315,100 @@ def falsos_testigos_fermat_miller_rabin(n, m):
 
 
 if __name__ == "__main__":
+    ############################################################################
+    # Ejercicio 1
+    print("Ejercicio 1")
+
+    n, a = 341, 2
+    print(f"Ejecutando test de Miller-Rabin para n = {n} y a = {a}")
+    print("El numero es probable primo? ", miller_rabin(n, a))
+
+    a = 10
+    print(f"Ejecutando test de Miller-Rabin para n = {n} y a = {a}")
+    print("El numero es probable primo? ", miller_rabin(n, a))
+
+    ############################################################################
+    # Ejercicio 2
+    print("\nEjercicio 2")
+
+    n, m = 341, 10
+    print(f"Ejecutando test de Miller-Rabin para n = {n} y m = {m}")
+    print("El numero es probable primo? ", test_miller_rabin(n, m))
+
+    n = 1729
+    print(f"Ejecutando test de Miller-Rabin para n = {n} y m = {m}")
+    print("El numero es probable primo? ", test_miller_rabin(n, m))
+
+    n = 203956878356401977405765866929034577280193993314348263094772646453283062722701277632936616063144088173312372882677123879538709400158306567338328279154499698366071906766440037074217117805690872792848149112022286332144876183376326512083574821647933992961249917319836219304274280243803104015000563790123
+    print(f"Ejecutando test de Miller-Rabin para n = {n} y m = {m}")
+    print("El numero es probable primo? ", test_miller_rabin(n, m))
+
+    ############################################################################
+    # Ejercicio 3
+    print("\nEjercicio 3")
+
+    n = 14
+    print(f"Buscando el primer primo mayor o igual que n = {n}")
+
+    p = primer_probable_primo(n, m)
+    print(f"El primer primo mayor o igual encontrado es p = {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    n= 1729
+    print(f"Buscando el primer primo mayor o igual que n = {n}")
+
+    p = primer_probable_primo(n, m)
+    print(f"El primer primo mayor o igual encontrado es p = {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    ############################################################################
+    # Ejercicio 4
+    print("\nEjercicio 4")
+
+    n = 12
+    print(f"Buscando el primer primo fuerte mayor o igual que n = {n}")
+
+    p = primer_probable_primo_fuerte(n, m)
+    print(f"El primer primo fuerte mayor o igual encontrado es p = {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    n= 1729
+    print(f"Buscando el primer primo fuerte mayor o igual que n = {n}")
+
+    p = primer_probable_primo_fuerte(n, m)
+    print(f"El primer primo fuerte mayor o igual encontrado es p = {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    ############################################################################
+    # Ejercicio 5
+    print("\nEjercicio 5")
+
+    n = 10
+    print(f"Buscando el primer primo fuerte de n = {n} bits")
+
+    p = primo_fuerte_n_bits(n, m)
+    print(f"El primer primo fuerte de {n} bits es {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    n = 25
+    print(f"Buscando el primer primo fuerte de n = {n} bits")
+
+    p = primo_fuerte_n_bits(n, m)
+    print(f"El primer primo fuerte de {n} bits es {p}")
+    print("El numero es probable primo? ", test_miller_rabin(p, m))
+
+    ############################################################################
+    # Ejercicio 6
+    print("\nEjercicio 6")
+
+    ############################################################################
+    # Ejercicio 7
+    print("\nEjercicio 7")
+
+    ############################################################################
+    # Ejercicio 8
+    print("\nEjercicio 8")
+
     """
     print(test_miller_rabin(1729, 10))
 
@@ -273,8 +418,6 @@ if __name__ == "__main__":
     fuerte = primer_probable_primo_fuerte(12, 10)
     print(fuerte)
     """
-
-    #primo_fuerte_n_bits(25, 10)
 
     #falsos_testigos = calcular_todos_falsos_testigos(121)
     #falsos_testigos = calcular_m_falsos_testigos(11 * 13 * 17 * 19 * 23, 200)
