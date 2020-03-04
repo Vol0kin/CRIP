@@ -103,7 +103,7 @@ def miller_rabin(n, a):
 # Ejercicio 2: Test de Miller-Rabin para un numero (n) con (m) numeros aleatorios
 ################################################################################
 
-def test_miller_rabin(n, m):
+def test_primalidad(n, m):
     """
     Funcion que realiza el test de Miller-Rabin sobre un numero n para determinar
     si es posible primo o no utilizando m testigos aleatorios.
@@ -143,7 +143,7 @@ def primer_probable_primo(n, m):
     es_posible_primo = False
 
     while not es_posible_primo:
-        es_posible_primo = test_miller_rabin(n, m)
+        es_posible_primo = test_primalidad(n, m)
 
         if es_posible_primo:
             posible_primo = n
@@ -167,7 +167,7 @@ def test_primo_fuerte(n, m):
 
     :return Devuelve True si n es probable primo fuerte y False en caso contrario. 
     """
-    return test_miller_rabin((n - 1) // 2, m)
+    return test_primalidad((n - 1) // 2, m)
 
 
 def primer_probable_primo_fuerte(n, m):
@@ -304,7 +304,7 @@ if __name__ == "__main__":
     # Ejercicio 1
     print("Ejercicio 1")
 
-    n, a = 341, 2
+    n, a = 1729, 2
     print(f"Ejecutando test de Miller-Rabin para n = {n} y a = {a}")
     print("El numero es probable primo? ", miller_rabin(n, a))
 
@@ -320,15 +320,15 @@ if __name__ == "__main__":
 
     n, m = 341, 20
     print(f"Ejecutando test de Miller-Rabin para n = {n} y m = {m}")
-    print("El numero es probable primo? ", test_miller_rabin(n, m))
+    print("El numero es probable primo? ", test_primalidad(n, m))
 
     n = 1729
     print(f"\nEjecutando test de Miller-Rabin para n = {n} y m = {m}")
-    print("El numero es probable primo? ", test_miller_rabin(n, m))
+    print("El numero es probable primo? ", test_primalidad(n, m))
 
     n = 203956878356401977405765866929034577280193993314348263094772646453283062722701277632936616063144088173312372882677123879538709400158306567338328279154499698366071906766440037074217117805690872792848149112022286332144876183376326512083574821647933992961249917319836219304274280243803104015000563790123
     print(f"\nEjecutando test de Miller-Rabin para n = {n} y m = {m}")
-    print("El numero es probable primo? ", test_miller_rabin(n, m))
+    print("El numero es probable primo? ", test_primalidad(n, m))
 
     imprime_separador()
 
@@ -341,14 +341,14 @@ if __name__ == "__main__":
 
     p = primer_probable_primo(n, m)
     print(f"El primer primo mayor o igual encontrado es p = {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     n= 1729
     print(f"\nBuscando el primer primo mayor o igual que n = {n}")
 
     p = primer_probable_primo(n, m)
     print(f"El primer primo mayor o igual encontrado es p = {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     imprime_separador()
 
@@ -361,14 +361,14 @@ if __name__ == "__main__":
 
     p = primer_probable_primo_fuerte(n, m)
     print(f"El primer primo fuerte mayor o igual encontrado es p = {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     n= 1729
     print(f"\nBuscando el primer primo fuerte mayor o igual que n = {n}")
 
     p = primer_probable_primo_fuerte(n, m)
     print(f"El primer primo fuerte mayor o igual encontrado es p = {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     imprime_separador()
 
@@ -381,35 +381,35 @@ if __name__ == "__main__":
 
     p = primo_fuerte_n_bits(n, m)
     print(f"El primer primo fuerte de {n} bits es {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     n = 25
     print(f"\nBuscando el primer primo fuerte de n = {n} bits")
 
     p = primo_fuerte_n_bits(n, m)
     print(f"El primer primo fuerte de {n} bits es {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     n = 50
     print(f"\nBuscando el primer primo fuerte de n = {n} bits")
 
     p = primo_fuerte_n_bits(n, m)
     print(f"El primer primo fuerte de {n} bits es {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     n = 100
     print(f"\nBuscando el primer primo fuerte de n = {n} bits")
 
     p = primo_fuerte_n_bits(n, m)
     print(f"El primer primo fuerte de {n} bits es {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     n = 500
     print(f"\nBuscando el primer primo fuerte de n = {n} bits")
 
     p = primo_fuerte_n_bits(n, m)
     print(f"El primer primo fuerte de {n} bits es {p}")
-    print("El numero es probable primo? ", test_miller_rabin(p, m))
+    print("El numero es probable primo? ", test_primalidad(p, m))
 
     imprime_separador()
 
