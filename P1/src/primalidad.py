@@ -131,7 +131,7 @@ def test_primalidad(n, m):
 # (n) que sea probable primo
 ################################################################################
 
-def primer_probable_primo(n, m):
+def siguiente_primo(n, m):
     """
     Funcion que calcula el primer numero mayor o igual a n que sea probable primo.
 
@@ -170,7 +170,7 @@ def test_primo_fuerte(n, m):
     return test_primalidad((n - 1) // 2, m)
 
 
-def primer_probable_primo_fuerte(n, m):
+def siguiente_primo_fuerte(n, m):
     """
     Funcion que calcula el primer numero mayor o igual a n que sea probable
     primo fuerte.
@@ -181,7 +181,7 @@ def primer_probable_primo_fuerte(n, m):
     es_primo_fuerte = False
 
     while not es_primo_fuerte:
-        n = primer_probable_primo(n, m)
+        n = siguiente_primo(n, m)
         es_primo_fuerte = test_primo_fuerte(n, m)
 
         if es_primo_fuerte:
@@ -206,7 +206,7 @@ def primo_fuerte_n_bits(n, m):
 
     :return Devuelve el primer probable primo fuerte de n bits.
     """
-    return primer_probable_primo_fuerte(2 ** (n-1), m)
+    return siguiente_primo_fuerte(2 ** (n-1), m)
 
 
 ################################################################################
@@ -339,14 +339,14 @@ if __name__ == "__main__":
     n = 14
     print(f"Buscando el primer primo mayor o igual que n = {n}")
 
-    p = primer_probable_primo(n, m)
+    p = siguiente_primo(n, m)
     print(f"El primer primo mayor o igual encontrado es p = {p}")
     print("El numero es probable primo? ", test_primalidad(p, m))
 
     n= 1729
     print(f"\nBuscando el primer primo mayor o igual que n = {n}")
 
-    p = primer_probable_primo(n, m)
+    p = siguiente_primo(n, m)
     print(f"El primer primo mayor o igual encontrado es p = {p}")
     print("El numero es probable primo? ", test_primalidad(p, m))
 
@@ -359,14 +359,14 @@ if __name__ == "__main__":
     n = 12
     print(f"Buscando el primer primo fuerte mayor o igual que n = {n}")
 
-    p = primer_probable_primo_fuerte(n, m)
+    p = siguiente_primo_fuerte(n, m)
     print(f"El primer primo fuerte mayor o igual encontrado es p = {p}")
     print("El numero es probable primo? ", test_primalidad(p, m))
 
     n= 1729
     print(f"\nBuscando el primer primo fuerte mayor o igual que n = {n}")
 
-    p = primer_probable_primo_fuerte(n, m)
+    p = siguiente_primo_fuerte(n, m)
     print(f"El primer primo fuerte mayor o igual encontrado es p = {p}")
     print("El numero es probable primo? ", test_primalidad(p, m))
 
@@ -423,6 +423,7 @@ if __name__ == "__main__":
 
     falsos_testigos = calcular_todos_falsos_testigos(n1)
 
+    print(f"Numero de falsos testigos encontrados: {len(falsos_testigos)}")
     print(f"Falsos testigos encontrados: {falsos_testigos}")
     print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, len(range(2, n1-1)))}")
 
@@ -436,11 +437,12 @@ if __name__ == "__main__":
 
     falsos_testigos = calcular_m_falsos_testigos(n2, m)
 
+    print(f"Numero de falsos testigos encontrados: {len(falsos_testigos)}")
     print(f"Falsos testigos encontrados: {falsos_testigos}")
     print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, m)}")
 
     # Elegir n3
-    p1 = primer_probable_primo(10000000, m)
+    p1 = siguiente_primo_fuerte(10000000, m)
     p2 = primo_fuerte_n_bits(25, m)
     n3 = p1 * p2
     print(f"\nValor de p1 = {p1}")
@@ -449,8 +451,9 @@ if __name__ == "__main__":
 
     print(f"Numero de testigos que se van a probar m = {m}")
 
-    falsos_testigos = calcular_m_falsos_testigos(n2, m)
+    falsos_testigos = calcular_m_falsos_testigos(n3, m)
 
+    print(f"Numero de falsos testigos encontrados: {len(falsos_testigos)}")
     print(f"Falsos testigos encontrados: {falsos_testigos}")
     print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, m)}")
 
@@ -467,6 +470,7 @@ if __name__ == "__main__":
 
     falsos_testigos = calcular_m_falsos_testigos(n, m)
 
+    print(f"Numero de falsos testigos encontrados: {len(falsos_testigos)}")
     print(f"Falsos testigos encontrados: {falsos_testigos}")
     print(f"Proporcion de falsos testigos: {calcular_proporcion_falsos_testigos(falsos_testigos, m)}")
 
@@ -483,6 +487,8 @@ if __name__ == "__main__":
 
     testigos_fermat, testigos_miller_rabin = falsos_testigos_fermat_miller_rabin(n, m)
 
+    print(f"Numero de falsos testigos encontrados con el test de Fermat: {len(testigos_fermat)}")
+    print(f"Numero de falsos testigos encontrados con el test de Miller-Rabin: {len(testigos_miller_rabin)}")
     print(f"Falsos testigos encontrados con el test de Fermat: {testigos_fermat}")
     print(f"Falsos testigos encontrados con el test de Miller-Rabin: {testigos_miller_rabin}")
 
