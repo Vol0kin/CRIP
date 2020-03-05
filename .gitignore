@@ -370,3 +370,6 @@ TSWLatexianTemp*
 
 # generated if using elsarticle.cls
 *.spl
+
+# zip files
+*.zip
