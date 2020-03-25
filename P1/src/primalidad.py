@@ -15,13 +15,13 @@ def potencia_modular(a, b, m):
     while b > 0:
         if b % 2 == 1:
             p = (p * a) % m
-        
+
         # Tambien se podria hacer un shift a la derecha
         # b = b >> 1
         b = b // 2
-        
+
         a = (a * a) % m
-    
+
     return p
 
 
@@ -47,20 +47,20 @@ def descomposicion(n):
 
     :param n: Numero del que calcular la descomposicion
 
-    :return Devuelve una tupla con u y s    
+    :return Devuelve una tupla con u y s
     """
     # Inicializar u y s
     u = 0
     s = n
-    
+
     while s % 2 == 0:
         u += 1
         s = s // 2
-    
+
     return u, s
 
 
-def miller_rabin(n, a):    
+def miller_rabin(n, a):
     """
     Funcion que realiza el test de primalidad de Miller-Rabin sobre un numero n
     dado utilizando un testigo a dado.
@@ -72,22 +72,22 @@ def miller_rabin(n, a):
     """
     # 1. Descomponer n-1 como 2^u * s con s impar
     u, s = descomposicion(n-1)
-    
+
     # 2. Calcular a = a^s mod n
     a = potencia_modular(a, s, n)
-    
+
     # Si a == 1 o a == n-1, el numero es posible primo
     if a == 1 or a == n-1:
         return True
-    
+
     for i in range(1, u):
         a = potencia_modular(a, 2, n)
-        
+
         # Si a == 1 sin haber pasado por n-1, el numero no es primo ya que tiene mas
         # de una solucion a x^2 - 1 = 0
         if a == 1:
             return False
-        
+
         """
         Si a == n-1, el siguiente valor sera 1, por lo tanto, cumpliria el test
         de Fermat y tendria solo dos soluciones a la ecuacion x^2 - 1 = 0. Puede
@@ -95,7 +95,7 @@ def miller_rabin(n, a):
         """
         if a == n-1:
             return True
-    
+
     return False
 
 
@@ -117,17 +117,17 @@ def test_primalidad(n, m):
     for i in range(m):
         # Escoger testigo tal que 2 <= a <= n-2
         a = random.randint(2, n-2)
-        
+
         es_prob_primo = miller_rabin(n, a)
-        
+
         if not es_prob_primo:
             return False
-    
+
     return True
 
 
 ################################################################################
-# Ejercicio 3: Dado un numero (n), calcular el primer numero, mayor o igual que 
+# Ejercicio 3: Dado un numero (n), calcular el primer numero, mayor o igual que
 # (n) que sea probable primo
 ################################################################################
 
@@ -141,20 +141,21 @@ def siguiente_primo(n, m):
     :return Devuelve un probable primo mayor o igual que n.
     """
     es_posible_primo = False
+    n = n + 1 - n % 2
 
     while not es_posible_primo:
         es_posible_primo = test_primalidad(n, m)
 
         if es_posible_primo:
             posible_primo = n
-        
-        n += 1
-    
+
+        n += 2
+
     return posible_primo
 
 
 ################################################################################
-# Ejercicio 4: Dado un numero (n), calcular el primer numero, mayor o igual que 
+# Ejercicio 4: Dado un numero (n), calcular el primer numero, mayor o igual que
 # (n) que sea probable primo fuerte (tanto n como (n-1)/2 son primos)
 ################################################################################
 
@@ -165,7 +166,7 @@ def test_primo_fuerte(n, m):
     :param n: Numero a partir del que se quiere encontrar el siguiente primo fuerte.
     :param m: Numero de testigos aleatorios que utilizar.
 
-    :return Devuelve True si n es probable primo fuerte y False en caso contrario. 
+    :return Devuelve True si n es probable primo fuerte y False en caso contrario.
     """
     return test_primalidad((n - 1) // 2, m)
 
@@ -186,9 +187,9 @@ def siguiente_primo_fuerte(n, m):
 
         if es_primo_fuerte:
             primo_fuerte = n
-        
+
         n += 1
-    
+
     return primo_fuerte
 
 
@@ -206,7 +207,8 @@ def primo_fuerte_n_bits(n, m):
 
     :return Devuelve el primer probable primo fuerte de n bits.
     """
-    return siguiente_primo_fuerte(2 ** (n-1), m)
+    val = random.randint(2 ** (n - 1), 2 ** n - 1)
+    return siguiente_primo_fuerte(val, m)
 
 
 ################################################################################
@@ -228,7 +230,7 @@ def calcular_todos_falsos_testigos(n):
     for a in range(2, n - 1):
         if miller_rabin(n, a):
             falsos_testigos.append(a)
-    
+
     return falsos_testigos
 
 
@@ -289,7 +291,7 @@ def falsos_testigos_fermat_miller_rabin(n, m):
 
         if test_fermat(n, a):
             falsos_testigos_fermat.append(a)
-        
+
         if miller_rabin(n, a):
             falsos_testigos_miller_rabin.append(a)
 
@@ -495,4 +497,4 @@ if __name__ == "__main__":
     print(f"Proporcion de falsos testigos para el tet de Fermat: {calcular_proporcion_falsos_testigos(testigos_fermat, m)}")
     print(f"Proporcion de falsos testigos para el test de Miller-Rabin: {calcular_proporcion_falsos_testigos(testigos_miller_rabin, m)}")
 
-   
+
