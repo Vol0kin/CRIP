@@ -1,136 +1,44 @@
-import Practica3 as utils
-import time
+import Utilidades as utils
 import random
+import time
 
-
-def potencia_modular(base, exponente, modulo):
-    a = base
-    b = exponente
-
-    p = 1
-    while b > 0:
-        if b % 2 == 1:
-            p = (p * a) % modulo
-        b //= 2
-        a = (a * a) % modulo
-
-    return p
-
-
-def descomponer(n):
-    u = 0
-    s = n
-    while s % 2 == 0:
-        u += 1
-        s = s // 2
-    return u, s
-
-
-def test_miller_rabin(n, a):
-    u, s = descomponer(n-1)
-    a = potencia_modular(a, s, n)
-    if a == 1 or a == n - 1:
-        return True
-    else:
-        for i in range(1, u):
-            a = (a*a) % n
-            if a == 1:
-                return False
-            if a == n - 1:
-                return True
-    return False
-
-
-def probable_primo(n, m):
-    for i in range(m):
-        r = random.randint(2, n-1)
-        primo = test_miller_rabin(n, r)
-        if not primo:
-            return False
-
-    return True
-
-
-def siguiente_primo(n):
-    if n % 2 == 0:
-        i = n+1
-    else:
-        i = n
-
-    while True:
-        if probable_primo(i, 5):
-            return i
-        i += 2
-
-        
-def primer_primo_fuerte(n):
-    if n % 2 == 0 :
-        i = n+1
-    else :
-        i = n
-
-    while True:
-        if probable_primo(i,10) and probable_primo((i-1)//2,10) :
-            return i
-        i += 2        
-        
-        
-def primofuerte_bits(n) :
-    while True :
-        r = random.randint(2**(n-1), 2**n - 1)
-        p = primer_primo_fuerte(r)
-        if p <= 2**n - 1 :
-            return p        
-
-          
-def orden(a, n):
-    i = 1
-    b = a
-    while not b == 1:
-        b = (b*a) % n
-        i += 1
-
-    return i
-
-
-def es_primitivo(a, n):
-    return orden(a, n) == n - 1
-
-
-def primer_primitivo(n):
-    for i in range(1, n-1):
-        if es_primitivo(i, n):
-            return i
-    
-    return None
-  
-# Problema logaritmo discreto
+### Problema logaritmo discreto ####################################################################
+# Encontrar una solución (si existe) de log_a(b) mod p, donde:
+#   - p primo
+#   - b entero, 1 <= b <= p-1
+#   - a entero, 2 <= a <= p-2
 
 # 1 - Fuerza bruta
 
 
-def fuerza_bruta(a, b, p):
+def logaritmo_fuerza_bruta(a, b, p):
     if b == 1:
         return 0
     else:
         for i in range(1, p-1):
-            potencia = potencia_modular(a, i, p)
+            potencia = utils.potencia_modular(a, i, p)
             if potencia == b:
                 return i
             if potencia == 1:
-                return -1
+                break
+
+    print("No existe el logaritmo")
     return -1
 
 
 # 2 - Algoritmo paso enano - paso gigante
-def pasoenano_pasogigante(a, b, p):
-    s = utils.raiz(p) + 1
-    T = []
-    for i in range(s):
-        T.append((potencia_modular(a, i, p) * b) % p)
 
-    for t in range(1, s):
-        e = potencia_modular(a, s*t, p)
+
+def logaritmo_pasoenano_pasogigante(a, b, p):
+    s = utils.raiz(p) + 1
+    
+    T = [b]
+    
+    for i in range(1, s):
+        T.append(T[i - 1] * a % p)
+
+    for t in range(1, s + 1):
+        e = utils.potencia_modular(a, s*t, p)
         if e in T:
             return t*s - T.index(e)
 
@@ -139,8 +47,9 @@ def pasoenano_pasogigante(a, b, p):
 
 
 # 3 - Algoritmo p de Pollard
+
+
 def logaritmo_ro_pollard(a, b, p):
-    print(a, b, p)
     def siguiente_pollard(x, alfa, beta):
         if x % 3 == 0:
             return x**2 % p, (2*alfa % (p - 1), 2*beta % (p - 1))
@@ -161,11 +70,16 @@ def logaritmo_ro_pollard(a, b, p):
     b_cong = alfa_beta_n[0] - alfa_beta_2n[0]
 
     sols = utils.congruencia(a_cong, b_cong, p - 1)
-    sols = tuple(filter(lambda x: potencia_modular(a, x, p) == b, sols))
+    sols = tuple(filter(lambda x: utils.potencia_modular(a, x, p) == b, sols))
 
-    return sols[0]
+    if len(sols) == 0:
+        print("No existe el logaritmo")
+        return -1
+    else:
+        return sols[0]
 
-# Problema factorización
+### Problema factorización #########################################################################
+# Dado un número n no primo, encontrar un divisor del mismo (distinto de 1 y n)
 
 # 1 - División por tentativa
 
@@ -173,21 +87,24 @@ def logaritmo_ro_pollard(a, b, p):
 def factorizacion_tentativa(n):
     p = 2
     while n % p != 0:
-        p = siguiente_primo(p+1)
+        p = utils.siguiente_primo(p+1)
 
-    return p, n//p
+    return p
 
 # 2 - Método de Fermat
 
 
 def factorizacion_fermat(n):
-    x = raiz(n)
-    y = x*x - n
-    while not utils.escuadrado(y):
-        x+=1
-        y = x*x - n
+    x = utils.raiz(n)
+    if not utils.escuadrado(x):
+        x += 1
+    y_cuadrado = x*x - n
+    while not utils.escuadrado(y_cuadrado):
+        x += 1
+        y_cuadrado = x*x - n
 
-    return x+y, x-y
+    y = utils.raiz(y_cuadrado)
+    return x+y
 
 # 3 - Algoritmo p de Pollard
 
@@ -209,41 +126,107 @@ def factorizacion_ro_pollard(n):
 
     return mcd
 
-  
-## Medición de tiempos 
 
-# Tiempos logaritmo discreto 
+### Medición de tiempos ############################################################################
 
-def medir_tiempo_log_discreto(algoritmo):
+# Funciones auxiliares para obtener elemento primitivo
+
+
+def orden(a, n):
+    i = 1
+    b = a
+    while not b == 1:
+        b = (b*a) % n
+        i += 1
+
+    return i
+
+
+def es_primitivo(a, n):
+    return orden(a, n) == n - 1
+
+
+def primer_primitivo(p):
+    q = int((p - 1) / 2)
+    
+    a = random.randint(2, p - 2)
+    
+    while not utils.potencia_modular(a, q, p) == p - 1:
+        a = random.randint(2, p - 2)
+    
+    return a
+
+# Tiempos logaritmo discreto
+
+
+def medir_tiempo_log_discreto(algoritmo, repeticiones, inicio, fin, incremento,):
     lista_tiempos = []
     lista_n = []
-    
-    n = 10
-    n_b = 10
-    
-    while True:
+
+    for n in range(inicio, fin+1, incremento):
         print(f"Inicio con {n} bits")
-        p = primofuerte_bits(n)
+        p = utils.primofuerte_bits(n)
         a = primer_primitivo(p)
-        
+
         t_tam = 0
-        
-        for i in range(n_b):
+
+        for i in range(repeticiones):
             b = random.randint(2, p-2)
-            
-            t1 = time.time()
-            algoritmo(a, b, p) 
-            t2 = time.time()
-            
+            t1 = time.clock()
+            algoritmo(a, b, p)
+            t2 = time.clock()
             t_tam += t2 - t1
-        
-        lista_tiempos.append(t_tam / n_b)
+
+        print(f"{t_tam / repeticiones}")
+
+        lista_tiempos.append(t_tam / repeticiones)
         lista_n.append(n)
-        n += 5
-        
-        print(f"{t_tam / n_b}")
-      
-  
+
     return lista_tiempos, lista_n
 
-medir_tiempo_log_discreto(logaritmo_ro_pollard)
+# Tiempos factorizacion
+
+def medir_tiempo_factorizacion(algoritmo, repeticiones, inicio, fin, incremento):
+    lista_medias = []
+    lista_max = []
+    lista_n = []
+
+    for n in range(inicio, fin+1, incremento):
+        print(f"Inicio con {n} bits")
+        tiempos_n = []
+
+        # Producto de primos pequeños
+        b = producto_primos_pequeños(n)
+        t1 = time.clock()
+        algoritmo(b)
+        t2 = time.clock()
+        tiempos_n.append(t2 - t1)
+
+        # Producto de primos de tamaño la mitad
+        p1 = utils.primofuerte_bits(n//2)
+        p2 = utils.primofuerte_bits(n//2)
+        t1 = time.clock()
+        algoritmo(p1 * p2)
+        t2 = time.clock()
+        tiempos_n.append(t2 - t1)
+
+        # Resto de repeticiones
+        for i in range(2, repeticiones):
+            b = impar_noprimo_nbits(n)
+            t1 = time.clock()
+            algoritmo(b)
+            t2 = time.clock()
+            tiempos_n.append(t2 - t1)
+
+        print(tiempos_n)
+        print(f"{sum(tiempos_n) / repeticiones}")
+
+        lista_medias.append(sum(tiempos_n) / repeticiones)
+        lista_max.append(max(tiempos_n))
+        lista_n.append(n)
+
+    return lista_medias, lista_max, lista_n
+
+#logaritmo_pasoenano_pasogigante(5, 6, 23)
+#print(logaritmo_ro_pollard(5, 6, 23))
+medir_tiempo_log_discreto(logaritmo_fuerza_bruta, 10, 5, 25, 1)
