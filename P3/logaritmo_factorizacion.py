@@ -95,8 +95,9 @@ def factorizacion_tentativa(n):
 
 
 def factorizacion_fermat(n):
+    print(n)
     x = utils.raiz(n)
-    if not utils.escuadrado(x):
+    if not utils.escuadrado(n):
         x += 1
     y_cuadrado = x*x - n
     while not utils.escuadrado(y_cuadrado):
@@ -110,19 +111,31 @@ def factorizacion_fermat(n):
 
 
 def factorizacion_ro_pollard(n):
+    incremento = 1
+    
     def siguiente_pollard(x):
-        return (x*x + 1) % n
+        return (x*x + incremento) % n
 
-    x = siguiente_pollard(0)
-    y = siguiente_pollard(x)
+    max_iter = utils.raiz(n)
 
-    mcd = utils.mcd(y-x, n)
-    while mcd == 1 or mcd == n:
-        x = siguiente_pollard(x)
-        y_aux = siguiente_pollard(y)
-        y = siguiente_pollard(y_aux)
+    while incremento < max_iter:
+        x = siguiente_pollard(0)
+        y = siguiente_pollard(x)
 
-        mcd = utils.mcd(y - x, n)
+        mcd = utils.mcd(y-x, n)
+
+        while mcd == 1:
+            x = siguiente_pollard(x)
+            y_aux = siguiente_pollard(y)
+            y = siguiente_pollard(y_aux)
+
+            mcd = utils.mcd(y - x, n)
+
+        if mcd == n:
+            incremento += 1
+        else:
+            break 
+
 
     return mcd
 
@@ -132,29 +145,40 @@ def factorizacion_ro_pollard(n):
 # Funciones auxiliares para obtener elemento primitivo
 
 
-def orden(a, n):
-    i = 1
-    b = a
-    while not b == 1:
-        b = (b*a) % n
-        i += 1
-
-    return i
-
-
-def es_primitivo(a, n):
-    return orden(a, n) == n - 1
-
-
 def primer_primitivo(p):
-    q = int((p - 1) / 2)
-    
+    q = (p - 1) // 2
+
     a = random.randint(2, p - 2)
-    
+
     while not utils.potencia_modular(a, q, p) == p - 1:
         a = random.randint(2, p - 2)
-    
+
     return a
+
+# Función para obtener un número impar no primo de n bits
+
+
+def impar_noprimo_nbits(n):
+    r = random.randint(2**(n-1), 2**n - 1)
+    while r % 2 == 0 or utils.probable_primo(r, 20):
+        r = random.randint(2**(n-1), 2**n - 1)
+
+    return r
+
+# Función para obtener un número de n bits a partir del producto de primos pequeños
+
+
+def producto_primos_pequeños(n):
+    objetivo = 2**(n-1)
+    p = 137
+    r = p
+
+    while r < objetivo:
+        p = utils.siguiente_primo(p)
+        r *= p
+
+    return r
+
 
 # Tiempos logaritmo discreto
 
@@ -229,4 +253,5 @@ def medir_tiempo_factorizacion(algoritmo, repeticiones, inicio, fin, incremento)
 
 #logaritmo_pasoenano_pasogigante(5, 6, 23)
 #print(logaritmo_ro_pollard(5, 6, 23))
-medir_tiempo_log_discreto(logaritmo_fuerza_bruta, 10, 5, 25, 1)
+#medir_tiempo_factorizacion(factorizacion_fermat, 10, 10, 25, 1)
+print(factorizacion_ro_pollard(25))
