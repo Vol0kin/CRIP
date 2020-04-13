@@ -12,13 +12,18 @@ import time
 
 
 def logaritmo_fuerza_bruta(a, b, p):
+    # Si b es 1, la solución es 0
     if b == 1:
         return 0
     else:
+        # En caso contrario, realizar la potencia modular de base a y módulo p
+        # con todos los valores posibles (excepto 0).
         for i in range(1, p-1):
             potencia = utils.potencia_modular(a, i, p)
+            # Si la potencia es b, tenemos una solución
             if potencia == b:
                 return i
+            # Si alguna potencia es 1, no existe solución
             if potencia == 1:
                 break
 
@@ -28,16 +33,17 @@ def logaritmo_fuerza_bruta(a, b, p):
 
 # 2 - Algoritmo paso enano - paso gigante
 
-
 def logaritmo_pasoenano_pasogigante(a, b, p):
     s = utils.raiz(p) + 1
-    
+
+    # Generación de la tabla
     T = [b]
-    
+
     for i in range(1, s):
         T.append(T[i - 1] * a % p)
 
-    for t in range(1, s + 1):
+    # Probar potencias s potencias de a, terminando si alguna está en la tabla
+    for t in range(1, s+1):
         e = utils.potencia_modular(a, s*t, p)
         if e in T:
             return t*s - T.index(e)
@@ -45,11 +51,12 @@ def logaritmo_pasoenano_pasogigante(a, b, p):
     print("No existe el logaritmo")
     return -1
 
-
 # 3 - Algoritmo p de Pollard
 
 
 def logaritmo_ro_pollard(a, b, p):
+
+    # Función para obtener el siguiente valor de una sucesión.
     def siguiente_pollard(x, alfa, beta):
         if x % 3 == 0:
             return x**2 % p, (2*alfa % (p - 1), 2*beta % (p - 1))
@@ -69,6 +76,7 @@ def logaritmo_ro_pollard(a, b, p):
     a_cong = alfa_beta_2n[1] - alfa_beta_n[1]
     b_cong = alfa_beta_n[0] - alfa_beta_2n[0]
 
+    # Resolver congruencia
     sols = utils.congruencia(a_cong, b_cong, p - 1)
     sols = tuple(filter(lambda x: utils.potencia_modular(a, x, p) == b, sols))
 
@@ -86,6 +94,8 @@ def logaritmo_ro_pollard(a, b, p):
 
 def factorizacion_tentativa(n):
     p = 2
+
+    # Probar a dividir n por todos los números primos hasta que alguno sea divispr
     while n % p != 0:
         p = utils.siguiente_primo(p+1)
 
@@ -95,11 +105,17 @@ def factorizacion_tentativa(n):
 
 
 def factorizacion_fermat(n):
-    print(n)
-    x = utils.raiz(n)
-    if not utils.escuadrado(n):
-        x += 1
+    x = utils.raiz(n)  # x raíz entera de n
+
+    # Si n es un número cuadrado, su raíz entera es un divisor
+    if utils.escuadrado(n):
+        return x
+
+    # En caso contrario, incrementar x (queremos entero igual o inmediatamente superior a la raíz)
+    x += 1
     y_cuadrado = x*x - n
+
+    # Incrementar x hasta que x² - n sea un cuadrado
     while not utils.escuadrado(y_cuadrado):
         x += 1
         y_cuadrado = x*x - n
@@ -112,18 +128,22 @@ def factorizacion_fermat(n):
 
 def factorizacion_ro_pollard(n):
     incremento = 1
-    
+
+    # Función para obtener el siguiente valor de una sucesión. Esta función varía según un incremento.
     def siguiente_pollard(x):
         return (x*x + incremento) % n
 
-    max_iter = utils.raiz(n)
+    max_iter = utils.raiz(n)  # Número máximo de funciones diferentes a probar
+    mcd = n
 
+    # Mientras no se haya probado el número máximo de funciones
     while incremento < max_iter:
         x = siguiente_pollard(0)
         y = siguiente_pollard(x)
 
         mcd = utils.mcd(y-x, n)
 
+        # Continuar obteniendo valores de la sucesión hasta obtener mcd != 1
         while mcd == 1:
             x = siguiente_pollard(x)
             y_aux = siguiente_pollard(y)
@@ -131,19 +151,19 @@ def factorizacion_ro_pollard(n):
 
             mcd = utils.mcd(y - x, n)
 
+        # Si el mcd es n, no se ha encontrado divisor: probar otra función
         if mcd == n:
             incremento += 1
+        # Si mcd != n, tenemos un divisor: fin del algoritmo
         else:
-            break 
-
+            break
 
     return mcd
 
 
 ### Medición de tiempos ############################################################################
 
-# Funciones auxiliares para obtener elemento primitivo
-
+# Función para obtener elemento primitivo a partir de primo fuerte
 
 def primer_primitivo(p):
     q = (p - 1) // 2
@@ -174,22 +194,22 @@ def producto_primos_pequeños(n):
     r = p
 
     while r < objetivo:
-        p = utils.siguiente_primo(p)
+        p = utils.siguiente_primo(p+1)
         r *= p
 
     return r
 
-
 # Tiempos logaritmo discreto
 
 
-def medir_tiempo_log_discreto(algoritmo, repeticiones, inicio, fin, incremento,):
+def medir_tiempo_log_discreto(algoritmo, repeticiones, inicio, fin, incremento):
     lista_tiempos = []
     lista_n = []
 
     for n in range(inicio, fin+1, incremento):
         print(f"Inicio con {n} bits")
         p = utils.primofuerte_bits(n)
+        # a elemento primitivo: el logaritmo debe tener solución
         a = primer_primitivo(p)
 
         t_tam = 0
@@ -209,6 +229,7 @@ def medir_tiempo_log_discreto(algoritmo, repeticiones, inicio, fin, incremento,)
     return lista_tiempos, lista_n
 
 # Tiempos factorizacion
+
 
 def medir_tiempo_factorizacion(algoritmo, repeticiones, inicio, fin, incremento):
     lista_medias = []
@@ -250,8 +271,3 @@ def medir_tiempo_factorizacion(algoritmo, repeticiones, inicio, fin, incremento)
         lista_n.append(n)
 
     return lista_medias, lista_max, lista_n
-
-#logaritmo_pasoenano_pasogigante(5, 6, 23)
-#print(logaritmo_ro_pollard(5, 6, 23))
-#medir_tiempo_factorizacion(factorizacion_fermat, 10, 10, 25, 1)
-print(factorizacion_ro_pollard(25))
