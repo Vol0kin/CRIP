@@ -1,4 +1,5 @@
 import numpy as np
+import whale
 
 def encrypt_text(text, pub_key, encoding):
     # Encode the text
@@ -246,4 +247,8 @@ if __name__ == '__main__':
     cipher = encrypt_text(text, pub_key, encoding)
 
     print(cipher)
+    np.random.seed(1)
+
+    alg = whale.WhaleOptimization(cipher, pub_key, 25)
+    alg.attack()
 
