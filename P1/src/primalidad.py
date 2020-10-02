@@ -79,9 +79,12 @@ def miller_rabin(n, a):
     # Si a == 1 o a == n-1, el numero es posible primo
     if a == 1 or a == n-1:
         return True
+    
+    print(a)
 
     for i in range(1, u):
         a = potencia_modular(a, 2, n)
+        print(a)
 
         # Si a == 1 sin haber pasado por n-1, el numero no es primo ya que tiene mas
         # de una solucion a x^2 - 1 = 0
